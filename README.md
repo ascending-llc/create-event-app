@@ -6,14 +6,19 @@
 A *template* is a sample folder with many files. You could place a template to GitHub, GitLab, Bitbucket or any other code repository, even in your local mechine!
 
 ## Usage
-Install **Create Event App** globaly.
+Using npx
+```bash
+npx create-event-app init
+```
+Or install **Create Event App** globaly.
+
 ```bash
 npm install create-event-app -g
 ```
 
 Check the `--help` command.
 ```bash
-scion --help
+create-react-app --help
 ```
 
 ```bash
