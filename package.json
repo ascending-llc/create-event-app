@@ -1,6 +1,6 @@
 {
   "name": "create-event-app",
-  "version": "1.0.3",
+  "version": "1.032621.1621",
   "description": "",
   "bin": {
     "create-event-app": "bin/create-event-app"
