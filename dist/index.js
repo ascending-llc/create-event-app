@@ -2221,7 +2221,7 @@ var doCopy = function (from, dist) {
         });
     });
 };
-function copyFiles(dist) {
+function copyFiles(dist, config) {
     return __awaiter(this, void 0, void 0, function () {
         var pwd, err_1;
         return __generator(this, function (_a) {
@@ -2231,12 +2231,12 @@ function copyFiles(dist) {
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 3, , 4]);
-                    // await fs.copy(`${pwd}/preview/add.gif`, `${dist}/add.gif`)
-                    return [4 /*yield*/, fs.copy(path.join(__dirname, '../components/Mixpanel.js'), dist + "/Mixpanel.js")];
+                    return [4 /*yield*/, fs.copy(path.join(__dirname, '../components/Mixpanel.js'), dist + "/src/components/util/Mixpanel.js")];
                 case 2:
-                    // await fs.copy(`${pwd}/preview/add.gif`, `${dist}/add.gif`)
                     _a.sent();
                     console.log('success!');
+                    fs.appendFile(dist + "/.env.uat", '\r\nREACT_APP_MIXPANEL_ID=' + config.mixPanelId);
+                    fs.appendFile(dist + "/.env.prod", '\nREACT_APP_MIXPANEL_ID=' + config.mixPanelId);
                     return [3 /*break*/, 4];
                 case 3:
                     err_1 = _a.sent();
@@ -2255,13 +2255,6 @@ var initiator = function (_a, config) {
             switch (_b.label) {
                 case 0:
                     console.log('metadata: ' + JSON.stringify(config));
-                    if (config.enableMixpanel) {
-                        console.log("Mixpanel enabled");
-                        copyFiles(dist);
-                    }
-                    else {
-                        console.log("Mixpanel not enabled");
-                    }
                     dlFrom = '';
                     if (!(from === 'GitHub' || from === 'GitLab' || from === 'Bitbucket')) return [3 /*break*/, 2];
                     dlFrom = from.toLocaleLowerCase() + ':' + path + '#' + branch;
@@ -2283,6 +2276,13 @@ var initiator = function (_a, config) {
                     result = _b.sent();
                     _b.label = 6;
                 case 6:
+                    if (config.enableMixpanel) {
+                        console.log("Mixpanel enabled");
+                        copyFiles(dist, config);
+                    }
+                    else {
+                        console.log("Mixpanel not enabled");
+                    }
                     console.log(result.status ? chalk.green(result.msg) : chalk.red(result.msg));
                     return [2 /*return*/];
             }

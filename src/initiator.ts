@@ -47,25 +47,22 @@ const doCopy = (from:string, dist:string):Promise<DownloadResult> => {
     })
   })
 }
-async function copyFiles (dist:string) {
+async function handleMixpanel (dist:string, config) {
   const pwd = process.cwd()
   try {
-    // await fs.copy(`${pwd}/preview/add.gif`, `${dist}/add.gif`)
+    // Handle Mixpanel action
     await fs.copy(path.join(__dirname, '../components/Mixpanel.js'), `${dist}/src/components/util/Mixpanel.js`)
     console.log('success!')
+    // Handle environment variable
+    fs.appendFile(`${dist}/.env.uat`, '\nREACT_APP_MIXPANEL_ID=' + config.mixPanelId)
+    fs.appendFile(`${dist}/.env.prod`, '\nREACT_APP_MIXPANEL_ID=' + config.mixPanelId)
+
   } catch (err) {
     console.error(err)
   }
 }
 const initiator = async ({ path, branch, from, dist }: Download, config) => {
   console.log('metadata: ' + JSON.stringify(config))
-  if (config.enableMixpanel) {
-    console.log("Mixpanel enabled")
-    copyFiles(dist)
-
-  } else {
-    console.log("Mixpanel not enabled")
-  }
   let dlFrom = ''
   let result:DownloadResult
   if (from === 'GitHub' || from === 'GitLab' || from === 'Bitbucket') {
@@ -77,6 +74,12 @@ const initiator = async ({ path, branch, from, dist }: Download, config) => {
   } else {
     dlFrom = 'others:' + from
     result = await doCopy(dlFrom.replace('others:', ''), dist)
+  }
+  if (config.enableMixpanel) {
+    console.log("Mixpanel enabled")
+    handleMixpanel(dist, config)
+  } else {
+    console.log("Mixpanel not enabled")
   }
 
   console.log(result.status ? chalk.green(result.msg) : chalk.red(result.msg))
