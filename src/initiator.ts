@@ -47,6 +47,7 @@ const doCopy = (from:string, dist:string):Promise<DownloadResult> => {
     })
   })
 }
+
 async function handleMixpanel (dist:string, config) {
   const pwd = process.cwd()
   try {
@@ -60,7 +61,80 @@ async function handleMixpanel (dist:string, config) {
   } catch (err) {
     console.error(err)
   }
+
+  // Import in Routes.jsx
+  fs.readFile(`${dist}/src/Routes.jsx`, function read(err, data) {
+    if (err) {
+       throw err;
+    }
+    var file_content = data.toString();
+    var str = "import { Mixpanel } from './components/util/Mixpanel';\n";
+    var idx = 0
+    var result = str + file_content.slice(idx);
+    fs.writeFile(`${dist}/src/Routes.jsx`, result, function trackInRoute(err) {
+      if (err) throw err;
+        // Track in Route
+        fs.readFile(`${dist}/src/Routes.jsx`, function read(err, data) {
+        if (err) {
+          throw err;
+        }
+        var file_content = data.toString();
+        var str = "\n  React.useEffect(() => {\n    Mixpanel.track(window.location.pathname);\n    Mixpanel.register({'path': window.location.pathname});\n  }, [location]);\n";
+        var idx = file_content.indexOf('export default function Routes() {') + 'export default function Routes() {'.length;
+        var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+        fs.writeFile(`${dist}/src/Routes.jsx`, result, function (err) {
+          if (err) throw err;
+        });
+      });
+    });
+  });
+
+
+
+  // Add mixpanel package
+  fs.readFile(`${dist}/package.json`, function read(err, data) {
+    if (err) {
+       throw err;
+    }
+    var file_content = data.toString();
+    var str = "\n    \"mixpanel-browser\": \"^2.39.0\",";
+    var idx = file_content.indexOf('"dependencies": {') + '"dependencies": {'.length;
+    var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+    fs.writeFile(`${dist}/package.json`, result, function (err) {
+      if (err) throw err;
+    });
+  });
+
+  // Import Mixpanel
+  fs.readFile(`${dist}/src/App.jsx`, function read(err, data) {
+    if (err) {
+       throw err;
+    }
+    var file_content = data.toString();
+    var str = "import mixpanel from 'mixpanel-browser';\n";
+    var idx = 0;
+    var result = str + file_content;
+    fs.writeFile(`${dist}/src/App.jsx`, result, function initMixpanel(err) {
+      if (err) throw err;
+      // Init Mixpanel
+      fs.readFile(`${dist}/src/App.jsx`, function read(err, data) {
+        if (err) {
+          throw err;
+        }
+        var file_content = data.toString();
+        var str = "\n  mixpanel.init(process.env.REACT_APP_MIXPANEL_ID);";
+        var idx = file_content.indexOf('function App() {') + 'function App() {'.length;
+        var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+        fs.writeFile(`${dist}/src/app.jsx`, result, function (err) {
+          if (err) throw err;
+        });
+      });
+    });
+  });
+
+  
 }
+
 const initiator = async ({ path, branch, from, dist }: Download, config) => {
   console.log('metadata: ' + JSON.stringify(config))
   let dlFrom = ''
