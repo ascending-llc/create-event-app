@@ -72,6 +72,7 @@ async function handleMixpanel (dist:string, config) {
   try {
     // Handle Mixpanel action
     await fs.copy(path.join(__dirname, '../components/Mixpanel.js'), `${dist}/src/components/util/Mixpanel.js`)
+    await fs.copy(path.join(__dirname, '../components/device.js'), `${dist}/src/components/util/device.js`)
     console.log('success!')
     // Handle environment variable
     fs.appendFile(`${dist}/.env.uat`, '\nREACT_APP_MIXPANEL_ID=' + config.mixPanelId)

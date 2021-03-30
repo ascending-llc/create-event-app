@@ -100,7 +100,6 @@ var DB = /** @class */ (function () {
     };
     return DB;
 }());
-//# sourceMappingURL=db.js.map
 
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -2006,7 +2005,6 @@ var listTable = (function (tplList, lyric, autoExit) {
         }
     });
 });
-//# sourceMappingURL=table.js.map
 
 function addTemplate() {
     return __awaiter(this, void 0, void 0, function () {
@@ -2120,7 +2118,6 @@ function addTemplate() {
         });
     });
 }
-//# sourceMappingURL=add.js.map
 
 function listTemplates() {
     return __awaiter(this, void 0, void 0, function () {
@@ -2136,7 +2133,6 @@ function listTemplates() {
         });
     });
 }
-//# sourceMappingURL=list.js.map
 
 function deleteTemplate() {
     return __awaiter(this, void 0, void 0, function () {
@@ -2181,7 +2177,6 @@ function deleteTemplate() {
         });
     });
 }
-//# sourceMappingURL=delete.js.map
 
 var path = require('path');
 var download = require('download-git-repo');
@@ -2254,22 +2249,25 @@ function handleMixpanel(dist, config) {
                     pwd = process.cwd();
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 3, , 4]);
+                    _a.trys.push([1, 4, , 5]);
                     // Handle Mixpanel action
                     return [4 /*yield*/, fs.copy(path.join(__dirname, '../components/Mixpanel.js'), dist + "/src/components/util/Mixpanel.js")];
                 case 2:
                     // Handle Mixpanel action
                     _a.sent();
+                    return [4 /*yield*/, fs.copy(path.join(__dirname, '../components/device.js'), dist + "/src/components/util/device.js")];
+                case 3:
+                    _a.sent();
                     console.log('success!');
                     // Handle environment variable
                     fs.appendFile(dist + "/.env.uat", '\nREACT_APP_MIXPANEL_ID=' + config.mixPanelId);
                     fs.appendFile(dist + "/.env.prod", '\nREACT_APP_MIXPANEL_ID=' + config.mixPanelId);
-                    return [3 /*break*/, 4];
-                case 3:
+                    return [3 /*break*/, 5];
+                case 4:
                     err_1 = _a.sent();
                     console.error(err_1);
-                    return [3 /*break*/, 4];
-                case 4:
+                    return [3 /*break*/, 5];
+                case 5:
                     // Import in Routes.jsx
                     fs.readFile(dist + "/src/Routes.jsx", function read(err, data) {
                         if (err) {
@@ -2392,7 +2390,6 @@ var initiator = function (_a, config) {
         });
     });
 };
-//# sourceMappingURL=initiator.js.map
 
 function initTemplate() {
     return __awaiter(this, void 0, void 0, function () {
@@ -2468,7 +2465,6 @@ function initTemplate() {
         });
     });
 }
-//# sourceMappingURL=init.js.map
 
 exports.add = addTemplate;
 exports.del = deleteTemplate;
