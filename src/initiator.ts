@@ -48,6 +48,25 @@ const doCopy = (from:string, dist:string):Promise<DownloadResult> => {
   })
 }
 
+const handleProjectName = (dist:string, config) => {
+  console.log(config.projectName);
+  return new Promise((resolve, reject) => {
+    fs.readFile(`${dist}/package.json`, function read(err, data) {
+      if (err) {
+         throw err;
+      }
+      var file_content = data.toString();
+      var str = config.projectName;
+      var idx = file_content.indexOf('"name": ') + 9;
+      var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+      fs.writeFile(`${dist}/package.json`, result, function (err) {
+        if (err) throw err;
+      });
+    });
+    resolve("finished")
+  })
+}
+
 async function handleMixpanel (dist:string, config) {
   const pwd = process.cwd()
   try {
@@ -89,8 +108,6 @@ async function handleMixpanel (dist:string, config) {
     });
   });
 
-
-
   // Add mixpanel package
   fs.readFile(`${dist}/package.json`, function read(err, data) {
     if (err) {
@@ -131,17 +148,20 @@ async function handleMixpanel (dist:string, config) {
       });
     });
   });
-
-  
 }
 
 const initiator = async ({ path, branch, from, dist }: Download, config) => {
-  console.log('metadata: ' + JSON.stringify(config))
+  // console.log('metadata: ' + JSON.stringify(config))
   let dlFrom = ''
   let result:DownloadResult
+  if (fs.existsSync(dist)) {
+    console.log("Project already exists");
+    return;
+  }
   if (from === 'GitHub' || from === 'GitLab' || from === 'Bitbucket') {
     dlFrom = from.toLocaleLowerCase() + ':' + path + '#' + branch
     result = await doDownload(dlFrom, dist)
+    await handleProjectName(dist, config)
   } else if (from.startsWith('http')) {
     dlFrom = 'direct:' + from
     result = await doDownload(dlFrom, dist)

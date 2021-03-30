@@ -2226,6 +2226,25 @@ var doCopy = function (from, dist) {
         });
     });
 };
+var handleProjectName = function (dist, config) {
+    console.log(config.projectName);
+    return new Promise(function (resolve, reject) {
+        fs.readFile(dist + "/package.json", function read(err, data) {
+            if (err) {
+                throw err;
+            }
+            var file_content = data.toString();
+            var str = config.projectName;
+            var idx = file_content.indexOf('"name": ') + 9;
+            var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+            fs.writeFile(dist + "/package.json", result, function (err) {
+                if (err)
+                    throw err;
+            });
+        });
+        resolve("finished");
+    });
+};
 function handleMixpanel(dist, config) {
     return __awaiter(this, void 0, void 0, function () {
         var pwd, err_1;
@@ -2332,28 +2351,34 @@ var initiator = function (_a, config) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    console.log('metadata: ' + JSON.stringify(config));
                     dlFrom = '';
-                    if (!(from === 'GitHub' || from === 'GitLab' || from === 'Bitbucket')) return [3 /*break*/, 2];
+                    if (fs.existsSync(dist)) {
+                        console.log("Project already exists");
+                        return [2 /*return*/];
+                    }
+                    if (!(from === 'GitHub' || from === 'GitLab' || from === 'Bitbucket')) return [3 /*break*/, 3];
                     dlFrom = from.toLocaleLowerCase() + ':' + path + '#' + branch;
                     return [4 /*yield*/, doDownload(dlFrom, dist)];
                 case 1:
                     result = _b.sent();
-                    return [3 /*break*/, 6];
+                    return [4 /*yield*/, handleProjectName(dist, config)];
                 case 2:
-                    if (!from.startsWith('http')) return [3 /*break*/, 4];
+                    _b.sent();
+                    return [3 /*break*/, 7];
+                case 3:
+                    if (!from.startsWith('http')) return [3 /*break*/, 5];
                     dlFrom = 'direct:' + from;
                     return [4 /*yield*/, doDownload(dlFrom, dist)];
-                case 3:
-                    result = _b.sent();
-                    return [3 /*break*/, 6];
                 case 4:
+                    result = _b.sent();
+                    return [3 /*break*/, 7];
+                case 5:
                     dlFrom = 'others:' + from;
                     return [4 /*yield*/, doCopy(dlFrom.replace('others:', ''), dist)];
-                case 5:
-                    result = _b.sent();
-                    _b.label = 6;
                 case 6:
+                    result = _b.sent();
+                    _b.label = 7;
+                case 7:
                     if (config.enableMixpanel) {
                         console.log("Mixpanel enabled");
                         handleMixpanel(dist, config);
@@ -2421,7 +2446,6 @@ function initTemplate() {
                         return __awaiter(_this, void 0, void 0, function () {
                             var tpl, path, branch, from, pwd, config;
                             return __generator(this, function (_b) {
-                                console.log(tplName + ", " + project + ", " + enableMixpanel + ", " + mixPanelId + " ");
                                 tpl = tplList.filter(function (_a) {
                                     var name = _a.name;
                                     return name === tplName;
@@ -2429,6 +2453,7 @@ function initTemplate() {
                                 path = tpl.path, branch = tpl.branch, from = tpl.from;
                                 pwd = process.cwd();
                                 config = {
+                                    'projectName': project,
                                     'enableMixpanel': enableMixpanel,
                                     'mixPanelId': mixPanelId,
                                     'enableSignIn': enableSignIn

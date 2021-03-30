@@ -49,11 +49,12 @@ async function initTemplate () {
 
   prompt(questions)
     .then(async ({ tplName, project, enableMixpanel, mixPanelId, enableSignIn }) => {
-    console.log(`${tplName}, ${project}, ${enableMixpanel}, ${mixPanelId} `)
+    // console.log(`${tplName}, ${project}, ${enableMixpanel}, ${mixPanelId} `)
     const tpl = tplList.filter(({ name }) => name === tplName)[0]
     const { path, branch, from }:any = tpl
     const pwd = process.cwd()
     const config = {
+      'projectName': project,
       'enableMixpanel': enableMixpanel,
       'mixPanelId': mixPanelId,
       'enableSignIn': enableSignIn
