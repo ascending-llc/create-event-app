@@ -67,23 +67,68 @@ const handleProjectName = (dist:string, config) => {
   })
 }
 
+const handleGA = async (dist:string, config) => {
+
+  if (!config.enableGA) {
+    return;
+  } else {
+    await fs.copy(path.join(__dirname, '../tamplates/gaScript.js'), `${dist}/src/components/util/gaScript.js`)
+    await fs.appendFile(`${dist}/.env.uat`, '\nREACT_APP_GA_ID=' + config.GAId)
+    await fs.appendFile(`${dist}/.env.prod`, '\nREACT_APP_GA_ID=')
+    
+    // Import gaScript
+    await fs.readFile(`${dist}/src/App.jsx`, function read(err, data) {
+      if (err) {
+        throw err;
+      }
+      var file_content = data.toString();
+      var str = "import gaScript from './components/utils/gaScript';\n";
+      var result = str + file_content;
+      fs.writeFile(`${dist}/src/App.jsx`, result, function initGAScript(err) {
+        if (err) throw err;
+        // Init GA
+        fs.readFile(`${dist}/src/App.jsx`, function read(err, data) {
+          if (err) {
+            throw err;
+          }
+          var file_content = data.toString();
+          var str = "\n  gaScript(process.env.REACT_APP_GA_ID);";
+          var idx = file_content.indexOf('function App() {') + 'function App() {'.length;
+          var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+          fs.writeFile(`${dist}/src/App.jsx`, result, function (err) {
+            if (err) throw err;
+          });
+        });
+      });
+    });
+  }
+
+  // return new Promise((resolve, reject) => {
+    
+  // })
+}
+
 async function handleMixpanel (dist:string, config) {
-  const pwd = process.cwd()
+
+  if (!config.enableMixpanel) {
+    return;
+  } else {
+    const pwd = process.cwd()
   try {
     // Handle Mixpanel action
-    await fs.copy(path.join(__dirname, '../components/Mixpanel.js'), `${dist}/src/components/util/Mixpanel.js`)
-    await fs.copy(path.join(__dirname, '../components/device.js'), `${dist}/src/components/util/device.js`)
-    console.log('success!')
+    fs.copy(path.join(__dirname, '../tamplates/Mixpanel.js'), `${dist}/src/components/util/Mixpanel.js`)
+    fs.copy(path.join(__dirname, '../tamplates/device.js'), `${dist}/src/components/util/device.js`)
+    
     // Handle environment variable
-    fs.appendFile(`${dist}/.env.uat`, '\nREACT_APP_MIXPANEL_ID=' + config.mixPanelId)
-    fs.appendFile(`${dist}/.env.prod`, '\nREACT_APP_MIXPANEL_ID=' + config.mixPanelId)
+    await fs.appendFile(`${dist}/.env.uat`, '\nREACT_APP_MIXPANEL_ID=' + config.mixPanelId)
+    await fs.appendFile(`${dist}/.env.prod`, '\nREACT_APP_MIXPANEL_ID=')
 
   } catch (err) {
     console.error(err)
   }
 
   // Import in Routes.jsx
-  fs.readFile(`${dist}/src/Routes.jsx`, function read(err, data) {
+  await fs.readFile(`${dist}/src/Routes.jsx`, function read(err, data) {
     if (err) {
        throw err;
     }
@@ -110,7 +155,7 @@ async function handleMixpanel (dist:string, config) {
   });
 
   // Add mixpanel package
-  fs.readFile(`${dist}/package.json`, function read(err, data) {
+  await fs.readFile(`${dist}/package.json`, function read(err, data) {
     if (err) {
        throw err;
     }
@@ -124,7 +169,7 @@ async function handleMixpanel (dist:string, config) {
   });
 
   // Import Mixpanel
-  fs.readFile(`${dist}/src/App.jsx`, function read(err, data) {
+  await fs.readFile(`${dist}/src/App.jsx`, function read(err, data) {
     if (err) {
        throw err;
     }
@@ -143,39 +188,51 @@ async function handleMixpanel (dist:string, config) {
         var str = "\n  mixpanel.init(process.env.REACT_APP_MIXPANEL_ID);";
         var idx = file_content.indexOf('function App() {') + 'function App() {'.length;
         var result = file_content.slice(0, idx) + str + file_content.slice(idx);
-        fs.writeFile(`${dist}/src/app.jsx`, result, function (err) {
+        fs.writeFile(`${dist}/src/App.jsx`, result, function (err) {
           if (err) throw err;
         });
       });
     });
   });
+  }
+
+
+  // return new Promise ((resolve, reject) => {
+    
+    
+  // })
+
+  
 }
 
 const initiator = async ({ path, branch, from, dist }: Download, config) => {
   // console.log('metadata: ' + JSON.stringify(config))
-  let dlFrom = ''
-  let result:DownloadResult
+  let dlFrom = '';
+  let result:DownloadResult;
   if (fs.existsSync(dist)) {
     console.log("Project already exists");
     return;
   }
   if (from === 'GitHub' || from === 'GitLab' || from === 'Bitbucket') {
-    dlFrom = from.toLocaleLowerCase() + ':' + path + '#' + branch
-    result = await doDownload(dlFrom, dist)
-    await handleProjectName(dist, config)
+    dlFrom = from.toLocaleLowerCase() + ':' + path + '#' + branch;
+    result = await doDownload(dlFrom, dist);
+    await handleProjectName(dist, config);
   } else if (from.startsWith('http')) {
-    dlFrom = 'direct:' + from
-    result = await doDownload(dlFrom, dist)
+    dlFrom = 'direct:' + from;
+    result = await doDownload(dlFrom, dist);
   } else {
-    dlFrom = 'others:' + from
-    result = await doCopy(dlFrom.replace('others:', ''), dist)
+    dlFrom = 'others:' + from;
+    result = await doCopy(dlFrom.replace('others:', ''), dist);
   }
-  if (config.enableMixpanel) {
-    console.log("Mixpanel enabled")
-    handleMixpanel(dist, config)
-  } else {
-    console.log("Mixpanel not enabled")
-  }
+  await handleMixpanel(dist, config);
+  await handleGA(dist, config);
+  
+  // if (config.enableMixpanel) {
+  //   console.log("Mixpanel enabled")
+  //   handleMixpanel(dist, config)
+  // } else {
+  //   console.log("Mixpanel not enabled")
+  // }
 
   console.log(result.status ? chalk.green(result.msg) : chalk.red(result.msg))
 }

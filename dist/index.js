@@ -100,6 +100,7 @@ var DB = /** @class */ (function () {
     };
     return DB;
 }());
+//# sourceMappingURL=db.js.map
 
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -2005,6 +2006,7 @@ var listTable = (function (tplList, lyric, autoExit) {
         }
     });
 });
+//# sourceMappingURL=table.js.map
 
 function addTemplate() {
     return __awaiter(this, void 0, void 0, function () {
@@ -2118,6 +2120,7 @@ function addTemplate() {
         });
     });
 }
+//# sourceMappingURL=add.js.map
 
 function listTemplates() {
     return __awaiter(this, void 0, void 0, function () {
@@ -2133,6 +2136,7 @@ function listTemplates() {
         });
     });
 }
+//# sourceMappingURL=list.js.map
 
 function deleteTemplate() {
     return __awaiter(this, void 0, void 0, function () {
@@ -2177,6 +2181,7 @@ function deleteTemplate() {
         });
     });
 }
+//# sourceMappingURL=delete.js.map
 
 var path = require('path');
 var download = require('download-git-repo');
@@ -2240,36 +2245,90 @@ var handleProjectName = function (dist, config) {
         resolve("finished");
     });
 };
+var handleGA = function (dist, config) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!!config.enableGA) return [3 /*break*/, 1];
+                return [2 /*return*/];
+            case 1: return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/gaScript.js'), dist + "/src/components/util/gaScript.js")];
+            case 2:
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_GA_ID=' + config.GAId)];
+            case 3:
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_GA_ID=')
+                    // Import gaScript
+                ];
+            case 4:
+                _a.sent();
+                // Import gaScript
+                return [4 /*yield*/, fs.readFile(dist + "/src/App.jsx", function read(err, data) {
+                        if (err) {
+                            throw err;
+                        }
+                        var file_content = data.toString();
+                        var str = "import gaScript from './components/utils/gaScript';\n";
+                        var result = str + file_content;
+                        fs.writeFile(dist + "/src/App.jsx", result, function initGAScript(err) {
+                            if (err)
+                                throw err;
+                            // Init GA
+                            fs.readFile(dist + "/src/App.jsx", function read(err, data) {
+                                if (err) {
+                                    throw err;
+                                }
+                                var file_content = data.toString();
+                                var str = "\n  gaScript(process.env.REACT_APP_GA_ID);";
+                                var idx = file_content.indexOf('function App() {') + 'function App() {'.length;
+                                var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                                fs.writeFile(dist + "/src/App.jsx", result, function (err) {
+                                    if (err)
+                                        throw err;
+                                });
+                            });
+                        });
+                    })];
+            case 5:
+                // Import gaScript
+                _a.sent();
+                _a.label = 6;
+            case 6: return [2 /*return*/];
+        }
+    });
+}); };
 function handleMixpanel(dist, config) {
     return __awaiter(this, void 0, void 0, function () {
         var pwd, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    pwd = process.cwd();
-                    _a.label = 1;
+                    if (!!config.enableMixpanel) return [3 /*break*/, 1];
+                    return [2 /*return*/];
                 case 1:
-                    _a.trys.push([1, 4, , 5]);
-                    // Handle Mixpanel action
-                    return [4 /*yield*/, fs.copy(path.join(__dirname, '../components/Mixpanel.js'), dist + "/src/components/util/Mixpanel.js")];
+                    pwd = process.cwd();
+                    _a.label = 2;
                 case 2:
+                    _a.trys.push([2, 5, , 6]);
                     // Handle Mixpanel action
-                    _a.sent();
-                    return [4 /*yield*/, fs.copy(path.join(__dirname, '../components/device.js'), dist + "/src/components/util/device.js")];
-                case 3:
-                    _a.sent();
-                    console.log('success!');
+                    fs.copy(path.join(__dirname, '../tamplates/Mixpanel.js'), dist + "/src/components/util/Mixpanel.js");
+                    fs.copy(path.join(__dirname, '../tamplates/device.js'), dist + "/src/components/util/device.js");
                     // Handle environment variable
-                    fs.appendFile(dist + "/.env.uat", '\nREACT_APP_MIXPANEL_ID=' + config.mixPanelId);
-                    fs.appendFile(dist + "/.env.prod", '\nREACT_APP_MIXPANEL_ID=' + config.mixPanelId);
-                    return [3 /*break*/, 5];
+                    return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_MIXPANEL_ID=' + config.mixPanelId)];
+                case 3:
+                    // Handle environment variable
+                    _a.sent();
+                    return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_MIXPANEL_ID=')];
                 case 4:
+                    _a.sent();
+                    return [3 /*break*/, 6];
+                case 5:
                     err_1 = _a.sent();
                     console.error(err_1);
-                    return [3 /*break*/, 5];
-                case 5:
-                    // Import in Routes.jsx
-                    fs.readFile(dist + "/src/Routes.jsx", function read(err, data) {
+                    return [3 /*break*/, 6];
+                case 6: 
+                // Import in Routes.jsx
+                return [4 /*yield*/, fs.readFile(dist + "/src/Routes.jsx", function read(err, data) {
                         if (err) {
                             throw err;
                         }
@@ -2295,49 +2354,59 @@ function handleMixpanel(dist, config) {
                                 });
                             });
                         });
-                    });
+                    })];
+                case 7:
+                    // Import in Routes.jsx
+                    _a.sent();
                     // Add mixpanel package
-                    fs.readFile(dist + "/package.json", function read(err, data) {
-                        if (err) {
-                            throw err;
-                        }
-                        var file_content = data.toString();
-                        var str = "\n    \"mixpanel-browser\": \"^2.39.0\",";
-                        var idx = file_content.indexOf('"dependencies": {') + '"dependencies": {'.length;
-                        var result = file_content.slice(0, idx) + str + file_content.slice(idx);
-                        fs.writeFile(dist + "/package.json", result, function (err) {
-                            if (err)
+                    return [4 /*yield*/, fs.readFile(dist + "/package.json", function read(err, data) {
+                            if (err) {
                                 throw err;
-                        });
-                    });
-                    // Import Mixpanel
-                    fs.readFile(dist + "/src/App.jsx", function read(err, data) {
-                        if (err) {
-                            throw err;
-                        }
-                        var file_content = data.toString();
-                        var str = "import mixpanel from 'mixpanel-browser';\n";
-                        var result = str + file_content;
-                        fs.writeFile(dist + "/src/App.jsx", result, function initMixpanel(err) {
-                            if (err)
-                                throw err;
-                            // Init Mixpanel
-                            fs.readFile(dist + "/src/App.jsx", function read(err, data) {
-                                if (err) {
+                            }
+                            var file_content = data.toString();
+                            var str = "\n    \"mixpanel-browser\": \"^2.39.0\",";
+                            var idx = file_content.indexOf('"dependencies": {') + '"dependencies": {'.length;
+                            var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                            fs.writeFile(dist + "/package.json", result, function (err) {
+                                if (err)
                                     throw err;
-                                }
-                                var file_content = data.toString();
-                                var str = "\n  mixpanel.init(process.env.REACT_APP_MIXPANEL_ID);";
-                                var idx = file_content.indexOf('function App() {') + 'function App() {'.length;
-                                var result = file_content.slice(0, idx) + str + file_content.slice(idx);
-                                fs.writeFile(dist + "/src/app.jsx", result, function (err) {
-                                    if (err)
+                            });
+                        })];
+                case 8:
+                    // Add mixpanel package
+                    _a.sent();
+                    // Import Mixpanel
+                    return [4 /*yield*/, fs.readFile(dist + "/src/App.jsx", function read(err, data) {
+                            if (err) {
+                                throw err;
+                            }
+                            var file_content = data.toString();
+                            var str = "import mixpanel from 'mixpanel-browser';\n";
+                            var result = str + file_content;
+                            fs.writeFile(dist + "/src/App.jsx", result, function initMixpanel(err) {
+                                if (err)
+                                    throw err;
+                                // Init Mixpanel
+                                fs.readFile(dist + "/src/App.jsx", function read(err, data) {
+                                    if (err) {
                                         throw err;
+                                    }
+                                    var file_content = data.toString();
+                                    var str = "\n  mixpanel.init(process.env.REACT_APP_MIXPANEL_ID);";
+                                    var idx = file_content.indexOf('function App() {') + 'function App() {'.length;
+                                    var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                                    fs.writeFile(dist + "/src/App.jsx", result, function (err) {
+                                        if (err)
+                                            throw err;
+                                    });
                                 });
                             });
-                        });
-                    });
-                    return [2 /*return*/];
+                        })];
+                case 9:
+                    // Import Mixpanel
+                    _a.sent();
+                    _a.label = 10;
+                case 10: return [2 /*return*/];
             }
         });
     });
@@ -2376,20 +2445,25 @@ var initiator = function (_a, config) {
                 case 6:
                     result = _b.sent();
                     _b.label = 7;
-                case 7:
-                    if (config.enableMixpanel) {
-                        console.log("Mixpanel enabled");
-                        handleMixpanel(dist, config);
-                    }
-                    else {
-                        console.log("Mixpanel not enabled");
-                    }
+                case 7: return [4 /*yield*/, handleMixpanel(dist, config)];
+                case 8:
+                    _b.sent();
+                    return [4 /*yield*/, handleGA(dist, config)];
+                case 9:
+                    _b.sent();
+                    // if (config.enableMixpanel) {
+                    //   console.log("Mixpanel enabled")
+                    //   handleMixpanel(dist, config)
+                    // } else {
+                    //   console.log("Mixpanel not enabled")
+                    // }
                     console.log(result.status ? chalk.green(result.msg) : chalk.red(result.msg));
                     return [2 /*return*/];
             }
         });
     });
 };
+//# sourceMappingURL=initiator.js.map
 
 function initTemplate() {
     return __awaiter(this, void 0, void 0, function () {
@@ -2433,13 +2507,21 @@ function initTemplate() {
                         },
                         {
                             type: 'confirm',
-                            name: 'enableSignIn',
-                            message: 'Do you want to add a sign in page?',
+                            name: 'enableGA',
+                            message: 'Do you want to enable Google Analytics?',
+                        },
+                        {
+                            type: 'input',
+                            name: 'GAId',
+                            message: 'What is your Google Analytics ID:',
+                            when: function (answers) {
+                                return answers.enableGA;
+                            },
                         },
                     ];
                     inquirer.prompt(questions)
                         .then(function (_a) {
-                        var tplName = _a.tplName, project = _a.project, enableMixpanel = _a.enableMixpanel, mixPanelId = _a.mixPanelId, enableSignIn = _a.enableSignIn;
+                        var tplName = _a.tplName, project = _a.project, enableMixpanel = _a.enableMixpanel, mixPanelId = _a.mixPanelId, enableSSO = _a.enableSSO, enableGA = _a.enableGA, GAId = _a.GAId;
                         return __awaiter(_this, void 0, void 0, function () {
                             var tpl, path, branch, from, pwd, config;
                             return __generator(this, function (_b) {
@@ -2453,7 +2535,9 @@ function initTemplate() {
                                     'projectName': project,
                                     'enableMixpanel': enableMixpanel,
                                     'mixPanelId': mixPanelId,
-                                    'enableSignIn': enableSignIn
+                                    'enableSSO': enableSSO,
+                                    'enableGA': enableGA,
+                                    'GAId': GAId
                                 };
                                 initiator({ path: path, branch: branch, from: from, dist: pwd + "/" + project }, config);
                                 return [2 /*return*/];
@@ -2465,6 +2549,7 @@ function initTemplate() {
         });
     });
 }
+//# sourceMappingURL=init.js.map
 
 exports.add = addTemplate;
 exports.del = deleteTemplate;

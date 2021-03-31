@@ -42,13 +42,26 @@ async function initTemplate () {
     },
     {
       type: 'confirm',
-      name: 'enableSignIn',
-      message: 'Do you want to add a sign in page?',
+      name: 'enableGA',
+      message: 'Do you want to enable Google Analytics?',
     }, 
+    {
+      type: 'input',
+      name: 'GAId',
+      message: 'What is your Google Analytics ID:',
+      when: function (answers) {
+        return answers.enableGA;
+      },
+    },
+    // {
+    //   type: 'confirm',
+    //   name: 'enableSSO',
+    //   message: 'Do you want to add a sign in page?',
+    // }, 
   ]
 
   prompt(questions)
-    .then(async ({ tplName, project, enableMixpanel, mixPanelId, enableSignIn }) => {
+    .then(async ({ tplName, project, enableMixpanel, mixPanelId, enableSSO, enableGA, GAId }) => {
     // console.log(`${tplName}, ${project}, ${enableMixpanel}, ${mixPanelId} `)
     const tpl = tplList.filter(({ name }) => name === tplName)[0]
     const { path, branch, from }:any = tpl
@@ -57,7 +70,9 @@ async function initTemplate () {
       'projectName': project,
       'enableMixpanel': enableMixpanel,
       'mixPanelId': mixPanelId,
-      'enableSignIn': enableSignIn
+      'enableSSO': enableSSO,
+      'enableGA': enableGA,
+      'GAId': GAId
     }
     initiator({ path, branch, from, dist: `${pwd}/${project}` }, config)
   })
