@@ -67,8 +67,21 @@ const handleProjectName = (dist:string, config) => {
   })
 }
 
-const handleGA = async (dist:string, config) => {
+const handleSSO = async (dist:string, config) => {
+  if (!config.enableSSO) {
+    return;
+  } else {
+    // Import authProvider
+    await fs.copy(path.join(__dirname, '../tamplates/authProvider.js'), `${dist}/src/components/util/authProvider.js`)
+    // Create environment variables
+    await fs.appendFile(`${dist}/.env.uat`, '\nREACT_APP_SSO_CLIENT_ID=' + config.SSOClientId)
+    await fs.appendFile(`${dist}/.env.uat`, '\nREACT_APP_SSO_TENANT_ID=' + config.SSOTenantId)
+    await fs.appendFile(`${dist}/.env.prod`, '\nREACT_APP_SSO_CLIENT_ID=')
+    await fs.appendFile(`${dist}/.env.prod`, '\nREACT_APP_SSO_TENANT_ID=')   
+  }
+}
 
+const handleGA = async (dist:string, config) => {
   if (!config.enableGA) {
     return;
   } else {
@@ -82,7 +95,7 @@ const handleGA = async (dist:string, config) => {
         throw err;
       }
       var file_content = data.toString();
-      var str = "import gaScript from './components/utils/gaScript';\n";
+      var str = "import gaScript from './components/util/gaScript';\n";
       var result = str + file_content;
       fs.writeFile(`${dist}/src/App.jsx`, result, function initGAScript(err) {
         if (err) throw err;
@@ -102,14 +115,9 @@ const handleGA = async (dist:string, config) => {
       });
     });
   }
-
-  // return new Promise((resolve, reject) => {
-    
-  // })
 }
 
 async function handleMixpanel (dist:string, config) {
-
   if (!config.enableMixpanel) {
     return;
   } else {
@@ -144,8 +152,8 @@ async function handleMixpanel (dist:string, config) {
           throw err;
         }
         var file_content = data.toString();
-        var str = "\n  React.useEffect(() => {\n    Mixpanel.track(window.location.pathname);\n    Mixpanel.register({'path': window.location.pathname});\n  }, [location]);\n";
-        var idx = file_content.indexOf('export default function Routes() {') + 'export default function Routes() {'.length;
+        var str = "\n  React.useEffect(() => {\n    Mixpanel.track(window.location.pathname);\n    Mixpanel.register({ path: window.location.pathname });\n  }, [location]);\n";
+        var idx = file_content.indexOf('const location = useLocation();') + 'const location = useLocation();'.length;
         var result = file_content.slice(0, idx) + str + file_content.slice(idx);
         fs.writeFile(`${dist}/src/Routes.jsx`, result, function (err) {
           if (err) throw err;
@@ -195,14 +203,6 @@ async function handleMixpanel (dist:string, config) {
     });
   });
   }
-
-
-  // return new Promise ((resolve, reject) => {
-    
-    
-  // })
-
-  
 }
 
 const initiator = async ({ path, branch, from, dist }: Download, config) => {
@@ -226,13 +226,7 @@ const initiator = async ({ path, branch, from, dist }: Download, config) => {
   }
   await handleMixpanel(dist, config);
   await handleGA(dist, config);
-  
-  // if (config.enableMixpanel) {
-  //   console.log("Mixpanel enabled")
-  //   handleMixpanel(dist, config)
-  // } else {
-  //   console.log("Mixpanel not enabled")
-  // }
+  await handleSSO(dist, config);
 
   console.log(result.status ? chalk.green(result.msg) : chalk.red(result.msg))
 }

@@ -32,7 +32,7 @@ export const Mixpanel = {
   },
 };
 
-function getMixpanel(){
+function getMixpanel() {
   return Mixpanel;
 }
 

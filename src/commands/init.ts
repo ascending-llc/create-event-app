@@ -22,7 +22,7 @@ async function initTemplate () {
     {
       type: 'input',
       name: 'project',
-      message: 'What is your project name:',
+      message: 'What is your project name?',
       // default: (lastAnswer) => {
       //   return lastAnswer.tplName
       // }
@@ -30,12 +30,12 @@ async function initTemplate () {
     {
       type: 'confirm',
       name: 'enableMixpanel',
-      message: 'Do you want to enable Mixpanel?',
+      message: 'Enable Mixpanel?',
     }, 
     {
       type: 'input',
       name: 'mixPanelId',
-      message: 'What is your Mixpanel ID:',
+      message: 'What is your Mixpanel ID?',
       when: function (answers) {
         return answers.enableMixpanel;
       },
@@ -43,25 +43,41 @@ async function initTemplate () {
     {
       type: 'confirm',
       name: 'enableGA',
-      message: 'Do you want to enable Google Analytics?',
+      message: 'Enable Google Analytics?',
     }, 
     {
       type: 'input',
       name: 'GAId',
-      message: 'What is your Google Analytics ID:',
+      message: 'What is your Google Analytics ID?',
       when: function (answers) {
         return answers.enableGA;
       },
     },
-    // {
-    //   type: 'confirm',
-    //   name: 'enableSSO',
-    //   message: 'Do you want to add a sign in page?',
-    // }, 
+    {
+      type: 'confirm',
+      name: 'enableSSO',
+      message: 'Enable Single Sign On?',
+    },
+    {
+      type: 'input',
+      name: 'SSOClientId',
+      message: 'What is your Client ID?',
+      when: function (answers) {
+        return answers.enableSSO;
+      },
+    },
+    {
+      type: 'input',
+      name: 'SSOTenantId',
+      message: 'What is your Tenant ID?',
+      when: function (answers) {
+        return answers.enableSSO;
+      },
+    },
   ]
 
   prompt(questions)
-    .then(async ({ tplName, project, enableMixpanel, mixPanelId, enableSSO, enableGA, GAId }) => {
+    .then(async ({ tplName, project, enableMixpanel, mixPanelId, enableSSO, enableGA, GAId, SSOClientId, SSOTenantId }) => {
     // console.log(`${tplName}, ${project}, ${enableMixpanel}, ${mixPanelId} `)
     const tpl = tplList.filter(({ name }) => name === tplName)[0]
     const { path, branch, from }:any = tpl
@@ -72,7 +88,9 @@ async function initTemplate () {
       'mixPanelId': mixPanelId,
       'enableSSO': enableSSO,
       'enableGA': enableGA,
-      'GAId': GAId
+      'GAId': GAId,
+      'SSOClientId': SSOClientId,
+      'SSOTenantId': SSOTenantId
     }
     initiator({ path, branch, from, dist: `${pwd}/${project}` }, config)
   })

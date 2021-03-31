@@ -2245,6 +2245,39 @@ var handleProjectName = function (dist, config) {
         resolve("finished");
     });
 };
+var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!!config.enableSSO) return [3 /*break*/, 1];
+                return [2 /*return*/];
+            case 1: 
+            // Import authProvider
+            return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/authProvider.js'), dist + "/src/components/util/authProvider.js")
+                // Create environment variables
+            ];
+            case 2:
+                // Import authProvider
+                _a.sent();
+                // Create environment variables
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_CLIENT_ID=' + config.SSOClientId)];
+            case 3:
+                // Create environment variables
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_TENANT_ID=' + config.SSOTenantId)];
+            case 4:
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_CLIENT_ID=')];
+            case 5:
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_TENANT_ID=')];
+            case 6:
+                _a.sent();
+                _a.label = 7;
+            case 7: return [2 /*return*/];
+        }
+    });
+}); };
 var handleGA = function (dist, config) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -2268,7 +2301,7 @@ var handleGA = function (dist, config) { return __awaiter(void 0, void 0, void 0
                             throw err;
                         }
                         var file_content = data.toString();
-                        var str = "import gaScript from './components/utils/gaScript';\n";
+                        var str = "import gaScript from './components/util/gaScript';\n";
                         var result = str + file_content;
                         fs.writeFile(dist + "/src/App.jsx", result, function initGAScript(err) {
                             if (err)
@@ -2345,8 +2378,8 @@ function handleMixpanel(dist, config) {
                                     throw err;
                                 }
                                 var file_content = data.toString();
-                                var str = "\n  React.useEffect(() => {\n    Mixpanel.track(window.location.pathname);\n    Mixpanel.register({'path': window.location.pathname});\n  }, [location]);\n";
-                                var idx = file_content.indexOf('export default function Routes() {') + 'export default function Routes() {'.length;
+                                var str = "\n  React.useEffect(() => {\n    Mixpanel.track(window.location.pathname);\n    Mixpanel.register({ path: window.location.pathname });\n  }, [location]);\n";
+                                var idx = file_content.indexOf('const location = useLocation();') + 'const location = useLocation();'.length;
                                 var result = file_content.slice(0, idx) + str + file_content.slice(idx);
                                 fs.writeFile(dist + "/src/Routes.jsx", result, function (err) {
                                     if (err)
@@ -2451,12 +2484,9 @@ var initiator = function (_a, config) {
                     return [4 /*yield*/, handleGA(dist, config)];
                 case 9:
                     _b.sent();
-                    // if (config.enableMixpanel) {
-                    //   console.log("Mixpanel enabled")
-                    //   handleMixpanel(dist, config)
-                    // } else {
-                    //   console.log("Mixpanel not enabled")
-                    // }
+                    return [4 /*yield*/, handleSSO(dist, config)];
+                case 10:
+                    _b.sent();
                     console.log(result.status ? chalk.green(result.msg) : chalk.red(result.msg));
                     return [2 /*return*/];
             }
@@ -2490,17 +2520,17 @@ function initTemplate() {
                         {
                             type: 'input',
                             name: 'project',
-                            message: 'What is your project name:',
+                            message: 'What is your project name?',
                         },
                         {
                             type: 'confirm',
                             name: 'enableMixpanel',
-                            message: 'Do you want to enable Mixpanel?',
+                            message: 'Enable Mixpanel?',
                         },
                         {
                             type: 'input',
                             name: 'mixPanelId',
-                            message: 'What is your Mixpanel ID:',
+                            message: 'What is your Mixpanel ID?',
                             when: function (answers) {
                                 return answers.enableMixpanel;
                             },
@@ -2508,20 +2538,41 @@ function initTemplate() {
                         {
                             type: 'confirm',
                             name: 'enableGA',
-                            message: 'Do you want to enable Google Analytics?',
+                            message: 'Enable Google Analytics?',
                         },
                         {
                             type: 'input',
                             name: 'GAId',
-                            message: 'What is your Google Analytics ID:',
+                            message: 'What is your Google Analytics ID?',
                             when: function (answers) {
                                 return answers.enableGA;
+                            },
+                        },
+                        {
+                            type: 'confirm',
+                            name: 'enableSSO',
+                            message: 'Enable Single Sign On?',
+                        },
+                        {
+                            type: 'input',
+                            name: 'SSOClientId',
+                            message: 'What is your Client ID?',
+                            when: function (answers) {
+                                return answers.enableSSO;
+                            },
+                        },
+                        {
+                            type: 'input',
+                            name: 'SSOTenantId',
+                            message: 'What is your Tenant ID?',
+                            when: function (answers) {
+                                return answers.enableSSO;
                             },
                         },
                     ];
                     inquirer.prompt(questions)
                         .then(function (_a) {
-                        var tplName = _a.tplName, project = _a.project, enableMixpanel = _a.enableMixpanel, mixPanelId = _a.mixPanelId, enableSSO = _a.enableSSO, enableGA = _a.enableGA, GAId = _a.GAId;
+                        var tplName = _a.tplName, project = _a.project, enableMixpanel = _a.enableMixpanel, mixPanelId = _a.mixPanelId, enableSSO = _a.enableSSO, enableGA = _a.enableGA, GAId = _a.GAId, SSOClientId = _a.SSOClientId, SSOTenantId = _a.SSOTenantId;
                         return __awaiter(_this, void 0, void 0, function () {
                             var tpl, path, branch, from, pwd, config;
                             return __generator(this, function (_b) {
@@ -2537,7 +2588,9 @@ function initTemplate() {
                                     'mixPanelId': mixPanelId,
                                     'enableSSO': enableSSO,
                                     'enableGA': enableGA,
-                                    'GAId': GAId
+                                    'GAId': GAId,
+                                    'SSOClientId': SSOClientId,
+                                    'SSOTenantId': SSOTenantId
                                 };
                                 initiator({ path: path, branch: branch, from: from, dist: pwd + "/" + project }, config);
                                 return [2 /*return*/];
