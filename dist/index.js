@@ -100,7 +100,6 @@ var DB = /** @class */ (function () {
     };
     return DB;
 }());
-//# sourceMappingURL=db.js.map
 
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -2006,7 +2005,6 @@ var listTable = (function (tplList, lyric, autoExit) {
         }
     });
 });
-//# sourceMappingURL=table.js.map
 
 function addTemplate() {
     return __awaiter(this, void 0, void 0, function () {
@@ -2120,7 +2118,6 @@ function addTemplate() {
         });
     });
 }
-//# sourceMappingURL=add.js.map
 
 function listTemplates() {
     return __awaiter(this, void 0, void 0, function () {
@@ -2136,7 +2133,6 @@ function listTemplates() {
         });
     });
 }
-//# sourceMappingURL=list.js.map
 
 function deleteTemplate() {
     return __awaiter(this, void 0, void 0, function () {
@@ -2181,7 +2177,6 @@ function deleteTemplate() {
         });
     });
 }
-//# sourceMappingURL=delete.js.map
 
 var path = require('path');
 var download = require('download-git-repo');
@@ -2251,30 +2246,200 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
             case 0:
                 if (!!config.enableSSO) return [3 /*break*/, 1];
                 return [2 /*return*/];
-            case 1: 
-            // Import authProvider
-            return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/authProvider.js'), dist + "/src/components/util/authProvider.js")
-                // Create environment variables
-            ];
+            case 1: return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/AuthConfig.js'), dist + "/src/components/Auth/AuthConfig.js")];
             case 2:
-                // Import authProvider
+                _a.sent();
+                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/AuthGuard.js'), dist + "/src/components/Auth/AuthGuard.js")];
+            case 3:
+                _a.sent();
+                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignInButton.jsx'), dist + "/src/components/Auth/SignInButton.jsx")];
+            case 4:
+                _a.sent();
+                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignOutButton.jsx'), dist + "/src/components/Auth/SignOutButton.jsx")];
+            case 5:
+                _a.sent();
+                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignInSignOutButton.jsx'), dist + "/src/components/Auth/SignInSignOutButton.jsx")];
+            case 6:
                 _a.sent();
                 // Create environment variables
                 return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_CLIENT_ID=' + config.SSOClientId)];
-            case 3:
+            case 7:
                 // Create environment variables
                 _a.sent();
                 return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_TENANT_ID=' + config.SSOTenantId)];
-            case 4:
+            case 8:
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_CLOUD_ID=https://login.microsoftonline.com')];
+            case 9:
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_POST_LOGOUT_REDIRECT_URL=')];
+            case 10:
                 _a.sent();
                 return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_CLIENT_ID=')];
-            case 5:
+            case 11:
                 _a.sent();
                 return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_TENANT_ID=')];
-            case 6:
+            case 12:
                 _a.sent();
-                _a.label = 7;
-            case 7: return [2 /*return*/];
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_CLOUD_ID=https://login.microsoftonline.com')];
+            case 13:
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_POST_LOGOUT_REDIRECT_URL=')];
+            case 14:
+                _a.sent();
+                // Add msal packages
+                return [4 /*yield*/, fs.readFile(dist + "/package.json", function read(err, data) {
+                        if (err) {
+                            throw err;
+                        }
+                        var file_content = data.toString();
+                        var str = "\n    \"@azure/msal-browser\": \"^2.14.2\",";
+                        str += "\n    \"@azure/msal-react\": \"^1.0.0\",";
+                        var idx = file_content.indexOf('"dependencies": {') + '"dependencies": {'.length;
+                        var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                        fs.writeFile(dist + "/package.json", result, function (err) {
+                            if (err)
+                                throw err;
+                        });
+                    })];
+            case 15:
+                // Add msal packages
+                _a.sent();
+                // Imports in App.jsx
+                return [4 /*yield*/, fs.readFile(dist + "/src/App.jsx", function read(err, data) {
+                        if (err)
+                            throw err;
+                        var file_content = data.toString();
+                        var str = "import { useHistory } from 'react-router-dom';\n";
+                        str += "import { MsalProvider } from '@azure/msal-react';\n;";
+                        str += "import { CustomNavigationClient } from './components/utils/NavigationClient';\n";
+                        var result = str + file_content;
+                        fs.writeFile(dist + "/src/App.jsx", result, function (err) {
+                            if (err)
+                                throw err;
+                            // Add msal instance as prop
+                            fs.readFile(dist + "/src/App.jsx", function read(err, data) {
+                                if (err)
+                                    throw err;
+                                var file_content = data.toString();
+                                var str = "{ pca }";
+                                var idx = file_content.indexOf('function App(') + 'function App('.length;
+                                var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                                fs.writeFile(dist + "/src/App.jsx", result, function (err) {
+                                    if (err)
+                                        throw err;
+                                    // Configure msal to custom navigation client
+                                    fs.readFile(dist + "/src/App.jsx", function read(err, data) {
+                                        if (err)
+                                            throw err;
+                                        var file_content = data.toString();
+                                        var str = "";
+                                        str += "\n\n\tconst history = useHistory();";
+                                        str += "\n\tconst navigationClient = new CustomNavigationClient(history);";
+                                        str += "\n\tpca.setNavigationClient(navigationClient);\n";
+                                        var idx = file_content.indexOf('function App({ pca }) {') + 'function App({ pca }) {'.length;
+                                        var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                                        fs.writeFile(dist + "/src/App.jsx", result, function (err) {
+                                            if (err)
+                                                throw err;
+                                            // Render MsalProvider in App
+                                            fs.readFile(dist + "/src/App.jsx", function read(err, data) {
+                                                if (err)
+                                                    throw err;
+                                                var file_content = data.toString();
+                                                var str = "<MsalProvider instance={pca}>\n\t\t";
+                                                var str2 = "\n\t\t</MsalProvider>";
+                                                var idx = file_content.indexOf('<div');
+                                                var idx2 = file_content.indexOf('</div>') + '</div>'.length;
+                                                var result = file_content.slice(0, idx) + str + file_content.slice(idx, idx2) + str2 + file_content.slice(idx2);
+                                                fs.writeFile(dist + "/src/App.jsx", result, function (err) {
+                                                    if (err)
+                                                        throw err;
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    })];
+            case 16:
+                // Imports in App.jsx
+                _a.sent();
+                // Imports in index.jsx
+                return [4 /*yield*/, fs.readFile(dist + "/src/index.jsx", function read(err, data) {
+                        if (err)
+                            throw err;
+                        var file_content = data.toString();
+                        var str = "import { PublicClientApplication, EventType } from '@azure/msal-browser';\n";
+                        str += "import { msalConfig } from './components/Auth/AuthConfig';\n";
+                        var result = str + file_content;
+                        fs.writeFile(dist + "/src/index.jsx", result, function (err) {
+                            if (err)
+                                throw err;
+                            // Init msal instance, set up account logic
+                            fs.readFile(dist + "/src/index.jsx", function read(err, data) {
+                                if (err)
+                                    throw err;
+                                var file_content = data.toString();
+                                var str = "export const msalInstance = new PublicClientApplication(msalConfig);";
+                                str += "\n\nconst accounts = msalInstance.getAllAccounts();\n\tif (accounts.length > 0) {\n\tmsalInstance.setActiveAccount(accounts[0]);\n}";
+                                str += "\n\nmsalInstance.addEventCallback((event) => {\n\tif (event.eventType === EventType.LOGIN_SUCCESS && event.payload.account) {\n\t\tconst account = event.payload.account;\n\t\tmsalInstance.setActiveAccount(account);\n\t}\n});\n\n";
+                                var idx = file_content.indexOf('ReactDOM.render');
+                                var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                                fs.writeFile(dist + "/src/index.jsx", result, function (err) {
+                                    if (err)
+                                        throw err;
+                                    // Pass msal instance into App
+                                    fs.readFile(dist + "/src/index.jsx", function read(err, data) {
+                                        if (err)
+                                            throw err;
+                                        var file_content = data.toString();
+                                        var str = " pca={msalInstance}";
+                                        var idx = file_content.indexOf('<App') + '<App'.length;
+                                        var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                                        fs.writeFile(dist + "/src/index.jsx", result, function (err) {
+                                            if (err)
+                                                throw err;
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    })];
+            case 17:
+                // Imports in index.jsx
+                _a.sent();
+                // Imports in Routes.jsx
+                return [4 /*yield*/, fs.readFile(dist + "/src/Routes.jsx", function read(err, data) {
+                        if (err)
+                            throw err;
+                        var file_content = data.toString();
+                        var str = "import AuthGuard from './components/Auth/AuthGuard';\n";
+                        var result = str + file_content;
+                        fs.writeFile(dist + "/src/Routes.jsx", result, function (err) {
+                            if (err)
+                                throw err;
+                            // Put AuthGuard into Switch
+                            fs.readFile(dist + "/src/Routes.jsx", function read(err, data) {
+                                if (err)
+                                    throw err;
+                                var file_content = data.toString();
+                                var str = "\n\t\t\t<AuthGuard defaultComponent={Home}>\n\t\t\t</AuthGuard>";
+                                var idx = file_content.indexOf('<Switch>') + '<Switch>'.length;
+                                var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                                fs.writeFile(dist + "/src/Routes.jsx", result, function (err) {
+                                    if (err)
+                                        throw err;
+                                });
+                            });
+                        });
+                    })];
+            case 18:
+                // Imports in Routes.jsx
+                _a.sent();
+                _a.label = 19;
+            case 19: return [2 /*return*/];
         }
     });
 }); };
@@ -2493,7 +2658,6 @@ var initiator = function (_a, config) {
         });
     });
 };
-//# sourceMappingURL=initiator.js.map
 
 function initTemplate() {
     return __awaiter(this, void 0, void 0, function () {
@@ -2602,7 +2766,6 @@ function initTemplate() {
         });
     });
 }
-//# sourceMappingURL=init.js.map
 
 exports.add = addTemplate;
 exports.del = deleteTemplate;
