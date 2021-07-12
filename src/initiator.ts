@@ -238,8 +238,8 @@ const handleSSO = async (dist:string, config) => {
         fs.readFile(`${dist}/src/Routes.jsx`, function read(err, data) {
           if (err) throw err;
           var file_content = data.toString();
-          var str = "\n      <AuthGuard defaultComponent={Home}>\n        {null}\n      </AuthGuard>";
-          var idx = file_content.indexOf('<Switch>') + '<Switch>'.length;
+          var str = "  <AuthGuard defaultComponent={Home}>\n        {null}\n      </AuthGuard>\n    ";
+          var idx = file_content.indexOf('</Switch>');
           var result = file_content.slice(0, idx) + str + file_content.slice(idx);
           fs.writeFile(`${dist}/src/Routes.jsx`, result, function (err) {
             if (err) throw err;
