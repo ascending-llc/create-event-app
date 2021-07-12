@@ -112,8 +112,9 @@ const handleSSO = async (dist:string, config) => {
       var str = "";
       str += "import { MsalProvider } from '@azure/msal-react';\n"
       str += "import { PublicClientApplication } from '@azure/msal-browser';\n";
-      str += "import { CustomNavigationClient } from './components/utils/NavigationClient';\n"
+      str += "import { CustomNavigationClient } from './components/util/NavigationClient';\n"
       str += "import PropTypes from 'prop-types';\n";
+      str += "import SignInSignOutButton from './components/Auth/SignInSignOutButton';\n";
       var str2 = ", useHistory"
       var idx = file_content.indexOf('BrowserRouter as Router') + 'BrowserRouter as Router'.length;
       var result = str + file_content.slice(0, idx) + str2 + file_content.slice(idx);
@@ -169,6 +170,16 @@ const handleSSO = async (dist:string, config) => {
                       var result = file_content.slice(0, idx) + str + file_content.slice(idx);
                       fs.writeFile(`${dist}/src/App.jsx`, result, function (err) {
                         if (err) throw err;
+                        // Render sample sign-in/sign-out button in App
+                        fs.readFile(`${dist}/src/App.jsx`, function read(err, data) {
+                          var file_content = data.toString();
+                          var str = "\n      <SignInSignOutButton />";
+                          var idx = file_content.indexOf('</div>') + '</div>'.length;
+                          var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                          fs.writeFile(`${dist}/src/App.jsx`, result, function (err) {
+                            if (err) throw err;
+                          });
+                        });
                       }); 
                     });
                   });
