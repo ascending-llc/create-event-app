@@ -76,8 +76,8 @@ const handleSSO = async (dist:string, config) => {
     await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignInButton.jsx'), `${dist}/src/components/Auth/SignInButton.jsx`);
     await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignOutButton.jsx'), `${dist}/src/components/Auth/SignOutButton.jsx`);
     await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignInSignOutButton.jsx'), `${dist}/src/components/Auth/SignInSignOutButton.jsx`);
-    await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/MsGraphApiCall.js'), `${dist}/src/components/utils/MsGraphApiCall.js`);
-    await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/NavigationClient.js'), `${dist}/src/components/utils/NavigationClient.js`);
+    await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/MsGraphApiCall.js'), `${dist}/src/components/util/MsGraphApiCall.js`);
+    await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/NavigationClient.js'), `${dist}/src/components/util/NavigationClient.js`);
 
     // Create environment variables
     await fs.appendFile(`${dist}/.env.uat`, '\nREACT_APP_SSO_CLIENT_ID=' + config.SSOClientId);
