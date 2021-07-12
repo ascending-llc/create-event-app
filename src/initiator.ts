@@ -76,6 +76,8 @@ const handleSSO = async (dist:string, config) => {
     await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignInButton.jsx'), `${dist}/src/components/Auth/SignInButton.jsx`);
     await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignOutButton.jsx'), `${dist}/src/components/Auth/SignOutButton.jsx`);
     await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignInSignOutButton.jsx'), `${dist}/src/components/Auth/SignInSignOutButton.jsx`);
+    await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/MsGraphApiCall.js'), `${dist}/src/components/utils/MsGraphApiCall.js`);
+    await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/NavigationClient.js'), `${dist}/src/components/utils/NavigationClient.js`);
 
     // Create environment variables
     await fs.appendFile(`${dist}/.env.uat`, '\nREACT_APP_SSO_CLIENT_ID=' + config.SSOClientId);
@@ -107,7 +109,7 @@ const handleSSO = async (dist:string, config) => {
       if (err) throw err;
       var file_content = data.toString();
       var str = "import { useHistory } from 'react-router-dom';\n";
-      str += "import { MsalProvider } from '@azure/msal-react';\n;"
+      str += "import { MsalProvider } from '@azure/msal-react';\n"
       str += "import { CustomNavigationClient } from './components/utils/NavigationClient';\n"
       var result = str + file_content;
       fs.writeFile(`${dist}/src/App.jsx`, result, function (err) {
