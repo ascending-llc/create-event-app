@@ -1,14 +1,13 @@
-import { useState } from 'react';
+import { React, useState } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { useIsAuthenticated } from "@azure/msal-react";
-
+import { useIsAuthenticated } from '@azure/msal-react';
 
 const AuthGuard = (props) => {
-  const { children } = props;
+  const { children, defaultComponent } = props;
   const isAuthenticated = useIsAuthenticated();
 
-  let history = useHistory();
+  const history = useHistory();
   const location = useLocation();
   const [requestedLocation, setRequestedLocation] = useState(null);
 
@@ -18,7 +17,7 @@ const AuthGuard = (props) => {
       setRequestedLocation(location.pathname);
     }
 
-    return (props.defaultComponent) ? props.defaultComponent : null;
+    return defaultComponent;
   }
 
   // This is done so that in case the route changes by any chance through other
@@ -34,7 +33,13 @@ const AuthGuard = (props) => {
 };
 
 AuthGuard.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
+  defaultComponent: PropTypes.element,
+};
+
+AuthGuard.defaultProps = {
+  children: null,
+  defaultComponent: null,
 };
 
 export default AuthGuard;

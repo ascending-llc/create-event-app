@@ -2249,7 +2249,7 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
             case 1: return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/AuthConfig.js'), dist + "/src/components/Auth/AuthConfig.js")];
             case 2:
                 _a.sent();
-                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/AuthGuard.js'), dist + "/src/components/Auth/AuthGuard.js")];
+                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/AuthGuard.jsx'), dist + "/src/components/Auth/AuthGuard.jsx")];
             case 3:
                 _a.sent();
                 return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignInButton.jsx'), dist + "/src/components/Auth/SignInButton.jsx")];
@@ -2301,6 +2301,7 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                         var file_content = data.toString();
                         var str = "\n    \"@azure/msal-browser\": \"^2.14.2\",";
                         str += "\n    \"@azure/msal-react\": \"^1.0.0\",";
+                        str += "\n    \"prop-types\": \"^15.7.2\",";
                         var idx = file_content.indexOf('"dependencies": {') + '"dependencies": {'.length;
                         var result = file_content.slice(0, idx) + str + file_content.slice(idx);
                         fs.writeFile(dist + "/package.json", result, function (err) {
@@ -2316,10 +2317,14 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                         if (err)
                             throw err;
                         var file_content = data.toString();
-                        var str = "import { useHistory } from 'react-router-dom';\n";
+                        var str = "";
                         str += "import { MsalProvider } from '@azure/msal-react';\n";
+                        str += "import { PublicClientApplication } from '@azure/msal-browser';\n";
                         str += "import { CustomNavigationClient } from './components/utils/NavigationClient';\n";
-                        var result = str + file_content;
+                        str += "import PropTypes from 'prop-types';\n";
+                        var str2 = ", useHistory";
+                        var idx = file_content.indexOf('BrowserRouter as Router') + 'BrowserRouter as Router'.length;
+                        var result = str + file_content.slice(0, idx) + str2 + file_content.slice(idx);
                         fs.writeFile(dist + "/src/App.jsx", result, function (err) {
                             if (err)
                                 throw err;
@@ -2340,9 +2345,9 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                                             throw err;
                                         var file_content = data.toString();
                                         var str = "";
-                                        str += "\n\n\tconst history = useHistory();";
-                                        str += "\n\tconst navigationClient = new CustomNavigationClient(history);";
-                                        str += "\n\tpca.setNavigationClient(navigationClient);\n";
+                                        str += "\n  const history = useHistory();";
+                                        str += "\n  const navigationClient = new CustomNavigationClient(history);";
+                                        str += "\n  pca.setNavigationClient(navigationClient);\n";
                                         var idx = file_content.indexOf('function App({ pca }) {') + 'function App({ pca }) {'.length;
                                         var result = file_content.slice(0, idx) + str + file_content.slice(idx);
                                         fs.writeFile(dist + "/src/App.jsx", result, function (err) {
@@ -2353,14 +2358,36 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                                                 if (err)
                                                     throw err;
                                                 var file_content = data.toString();
-                                                var str = "<MsalProvider instance={pca}>\n\t\t";
-                                                var str2 = "\n\t\t</MsalProvider>";
+                                                var str = "";
+                                                str += "<MsalProvider instance={pca}>";
+                                                str += "\n      <div className=\"\">";
+                                                str += "\n        <Router>";
+                                                str += "\n          <Routes />";
+                                                str += "\n        </Router>";
+                                                str += "\n      </div>";
+                                                str += "\n    </MsalProvider>";
                                                 var idx = file_content.indexOf('<div');
                                                 var idx2 = file_content.indexOf('</div>') + '</div>'.length;
-                                                var result = file_content.slice(0, idx) + str + file_content.slice(idx, idx2) + str2 + file_content.slice(idx2);
+                                                var result = file_content.slice(0, idx) + str + file_content.slice(idx2);
                                                 fs.writeFile(dist + "/src/App.jsx", result, function (err) {
                                                     if (err)
                                                         throw err;
+                                                    // Validate App Properties
+                                                    fs.readFile(dist + "/src/App.jsx", function read(err, data) {
+                                                        if (err)
+                                                            throw err;
+                                                        var file_content = data.toString();
+                                                        var str = "";
+                                                        str += "App.propTypes = {";
+                                                        str += "\n  pca: PropTypes.instanceOf(PublicClientApplication).isRequired,";
+                                                        str += "\n};\n\n";
+                                                        var idx = file_content.indexOf('export default App');
+                                                        var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                                                        fs.writeFile(dist + "/src/App.jsx", result, function (err) {
+                                                            if (err)
+                                                                throw err;
+                                                        });
+                                                    });
                                                 });
                                             });
                                         });
@@ -2389,8 +2416,8 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                                     throw err;
                                 var file_content = data.toString();
                                 var str = "export const msalInstance = new PublicClientApplication(msalConfig);";
-                                str += "\n\nconst accounts = msalInstance.getAllAccounts();\n\tif (accounts.length > 0) {\n\tmsalInstance.setActiveAccount(accounts[0]);\n}";
-                                str += "\n\nmsalInstance.addEventCallback((event) => {\n\tif (event.eventType === EventType.LOGIN_SUCCESS && event.payload.account) {\n\t\tconst account = event.payload.account;\n\t\tmsalInstance.setActiveAccount(account);\n\t}\n});\n\n";
+                                str += "\n\nconst accounts = msalInstance.getAllAccounts();\nif (accounts.length > 0) {\n  msalInstance.setActiveAccount(accounts[0]);\n}";
+                                str += "\n\nmsalInstance.addEventCallback((event) => {\n  if (event.eventType === EventType.LOGIN_SUCCESS && event.payload.account) {\n    const { account } = event.payload;\n    msalInstance.setActiveAccount(account);\n  }\n});\n\n";
                                 var idx = file_content.indexOf('ReactDOM.render');
                                 var result = file_content.slice(0, idx) + str + file_content.slice(idx);
                                 fs.writeFile(dist + "/src/index.jsx", result, function (err) {
@@ -2407,6 +2434,18 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                                         fs.writeFile(dist + "/src/index.jsx", result, function (err) {
                                             if (err)
                                                 throw err;
+                                            // Default export as msal instance
+                                            fs.readFile(dist + "/src/index.jsx", function read(err, data) {
+                                                if (err)
+                                                    throw err;
+                                                var file_content = data.toString();
+                                                var str = "\nexport default msalInstance;\n";
+                                                var result = file_content + str;
+                                                fs.writeFile(dist + "/src/index.jsx", result, function (err) {
+                                                    if (err)
+                                                        throw err;
+                                                });
+                                            });
                                         });
                                     });
                                 });
@@ -2431,7 +2470,7 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                                 if (err)
                                     throw err;
                                 var file_content = data.toString();
-                                var str = "\n\t\t\t<AuthGuard defaultComponent={Home}>\n\t\t\t</AuthGuard>";
+                                var str = "\n      <AuthGuard defaultComponent={Home}>\n        {null}\n      </AuthGuard>";
                                 var idx = file_content.indexOf('<Switch>') + '<Switch>'.length;
                                 var result = file_content.slice(0, idx) + str + file_content.slice(idx);
                                 fs.writeFile(dist + "/src/Routes.jsx", result, function (err) {
