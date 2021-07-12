@@ -2261,10 +2261,10 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                 return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignInSignOutButton.jsx'), dist + "/src/components/Auth/SignInSignOutButton.jsx")];
             case 6:
                 _a.sent();
-                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/MsGraphApiCall.js'), dist + "/src/components/utils/MsGraphApiCall.js")];
+                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/MsGraphApiCall.js'), dist + "/src/components/util/MsGraphApiCall.js")];
             case 7:
                 _a.sent();
-                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/NavigationClient.js'), dist + "/src/components/utils/NavigationClient.js")];
+                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/NavigationClient.js'), dist + "/src/components/util/NavigationClient.js")];
             case 8:
                 _a.sent();
                 // Create environment variables
@@ -2320,8 +2320,9 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                         var str = "";
                         str += "import { MsalProvider } from '@azure/msal-react';\n";
                         str += "import { PublicClientApplication } from '@azure/msal-browser';\n";
-                        str += "import { CustomNavigationClient } from './components/utils/NavigationClient';\n";
+                        str += "import { CustomNavigationClient } from './components/util/NavigationClient';\n";
                         str += "import PropTypes from 'prop-types';\n";
+                        str += "import SignInSignOutButton from './components/Auth/SignInSignOutButton';\n";
                         var str2 = ", useHistory";
                         var idx = file_content.indexOf('BrowserRouter as Router') + 'BrowserRouter as Router'.length;
                         var result = str + file_content.slice(0, idx) + str2 + file_content.slice(idx);
@@ -2386,6 +2387,17 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                                                         fs.writeFile(dist + "/src/App.jsx", result, function (err) {
                                                             if (err)
                                                                 throw err;
+                                                            // Render sample sign-in/sign-out button in App
+                                                            fs.readFile(dist + "/src/App.jsx", function read(err, data) {
+                                                                var file_content = data.toString();
+                                                                var str = "\n      <SignInSignOutButton />";
+                                                                var idx = file_content.indexOf('</div>') + '</div>'.length;
+                                                                var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                                                                fs.writeFile(dist + "/src/App.jsx", result, function (err) {
+                                                                    if (err)
+                                                                        throw err;
+                                                                });
+                                                            });
                                                         });
                                                     });
                                                 });
@@ -2470,8 +2482,8 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                                 if (err)
                                     throw err;
                                 var file_content = data.toString();
-                                var str = "\n      <AuthGuard defaultComponent={Home}>\n        {null}\n      </AuthGuard>";
-                                var idx = file_content.indexOf('<Switch>') + '<Switch>'.length;
+                                var str = "  <AuthGuard defaultComponent={Home}>\n        {null}\n      </AuthGuard>\n    ";
+                                var idx = file_content.indexOf('</Switch>');
                                 var result = file_content.slice(0, idx) + str + file_content.slice(idx);
                                 fs.writeFile(dist + "/src/Routes.jsx", result, function (err) {
                                     if (err)
