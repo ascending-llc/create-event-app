@@ -2261,31 +2261,37 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                 return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignInSignOutButton.jsx'), dist + "/src/components/Auth/SignInSignOutButton.jsx")];
             case 6:
                 _a.sent();
+                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/MsGraphApiCall.js'), dist + "/src/components/utils/MsGraphApiCall.js")];
+            case 7:
+                _a.sent();
+                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/NavigationClient.js'), dist + "/src/components/utils/NavigationClient.js")];
+            case 8:
+                _a.sent();
                 // Create environment variables
                 return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_CLIENT_ID=' + config.SSOClientId)];
-            case 7:
+            case 9:
                 // Create environment variables
                 _a.sent();
                 return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_TENANT_ID=' + config.SSOTenantId)];
-            case 8:
-                _a.sent();
-                return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_CLOUD_ID=https://login.microsoftonline.com')];
-            case 9:
-                _a.sent();
-                return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_POST_LOGOUT_REDIRECT_URL=')];
             case 10:
                 _a.sent();
-                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_CLIENT_ID=')];
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_CLOUD_ID=https://login.microsoftonline.com')];
             case 11:
                 _a.sent();
-                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_TENANT_ID=')];
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_POST_LOGOUT_REDIRECT_URL=')];
             case 12:
                 _a.sent();
-                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_CLOUD_ID=https://login.microsoftonline.com')];
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_CLIENT_ID=')];
             case 13:
                 _a.sent();
-                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_POST_LOGOUT_REDIRECT_URL=')];
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_TENANT_ID=')];
             case 14:
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_CLOUD_ID=https://login.microsoftonline.com')];
+            case 15:
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_POST_LOGOUT_REDIRECT_URL=')];
+            case 16:
                 _a.sent();
                 // Add msal packages
                 return [4 /*yield*/, fs.readFile(dist + "/package.json", function read(err, data) {
@@ -2302,7 +2308,7 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                                 throw err;
                         });
                     })];
-            case 15:
+            case 17:
                 // Add msal packages
                 _a.sent();
                 // Imports in App.jsx
@@ -2311,7 +2317,7 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                             throw err;
                         var file_content = data.toString();
                         var str = "import { useHistory } from 'react-router-dom';\n";
-                        str += "import { MsalProvider } from '@azure/msal-react';\n;";
+                        str += "import { MsalProvider } from '@azure/msal-react';\n";
                         str += "import { CustomNavigationClient } from './components/utils/NavigationClient';\n";
                         var result = str + file_content;
                         fs.writeFile(dist + "/src/App.jsx", result, function (err) {
@@ -2363,7 +2369,7 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                             });
                         });
                     })];
-            case 16:
+            case 18:
                 // Imports in App.jsx
                 _a.sent();
                 // Imports in index.jsx
@@ -2407,7 +2413,7 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                             });
                         });
                     })];
-            case 17:
+            case 19:
                 // Imports in index.jsx
                 _a.sent();
                 // Imports in Routes.jsx
@@ -2435,11 +2441,11 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                             });
                         });
                     })];
-            case 18:
+            case 20:
                 // Imports in Routes.jsx
                 _a.sent();
-                _a.label = 19;
-            case 19: return [2 /*return*/];
+                _a.label = 21;
+            case 21: return [2 /*return*/];
         }
     });
 }); };
