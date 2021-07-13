@@ -1,5 +1,5 @@
-import { loginRequest, graphConfig } from "../Auth/AuthConfig";
-import { msalInstance } from "../../index";
+import { loginRequest, graphConfig } from '../Auth/AuthConfig';
+import { msalInstance } from '../../index';
 
 export async function callMsGraph() {
     const account = msalInstance.getActiveAccount();
@@ -9,7 +9,7 @@ export async function callMsGraph() {
 
     const response = await msalInstance.acquireTokenSilent({
         ...loginRequest,
-        account: account
+        account: account,
     });
 
     const headers = new Headers();
@@ -18,7 +18,7 @@ export async function callMsGraph() {
     headers.append("Authorization", bearer);
 
     const options = {
-        method: "GET",
+        method: 'GET',
         headers: headers
     };
 

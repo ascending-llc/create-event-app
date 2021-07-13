@@ -76,8 +76,8 @@ const handleSSO = async (dist:string, config) => {
     await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignInButton.jsx'), `${dist}/src/components/Auth/SignInButton.jsx`);
     await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignOutButton.jsx'), `${dist}/src/components/Auth/SignOutButton.jsx`);
     await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignInSignOutButton.jsx'), `${dist}/src/components/Auth/SignInSignOutButton.jsx`);
-    await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/MsGraphApiCall.js'), `${dist}/src/components/utils/MsGraphApiCall.js`);
-    await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/NavigationClient.js'), `${dist}/src/components/utils/NavigationClient.js`);
+    await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/MsGraphApiCall.js'), `${dist}/src/components/util/MsGraphApiCall.js`);
+    await fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/NavigationClient.js'), `${dist}/src/components/util/NavigationClient.js`);
 
     // Create environment variables
     await fs.appendFile(`${dist}/.env.uat`, '\nREACT_APP_SSO_CLIENT_ID=' + config.SSOClientId);
@@ -112,8 +112,9 @@ const handleSSO = async (dist:string, config) => {
       var str = "";
       str += "import { MsalProvider } from '@azure/msal-react';\n"
       str += "import { PublicClientApplication } from '@azure/msal-browser';\n";
-      str += "import { CustomNavigationClient } from './components/utils/NavigationClient';\n"
+      str += "import { CustomNavigationClient } from './components/util/NavigationClient';\n"
       str += "import PropTypes from 'prop-types';\n";
+      str += "import SignInSignOutButton from './components/Auth/SignInSignOutButton';\n";
       var str2 = ", useHistory"
       var idx = file_content.indexOf('BrowserRouter as Router') + 'BrowserRouter as Router'.length;
       var result = str + file_content.slice(0, idx) + str2 + file_content.slice(idx);
@@ -169,6 +170,16 @@ const handleSSO = async (dist:string, config) => {
                       var result = file_content.slice(0, idx) + str + file_content.slice(idx);
                       fs.writeFile(`${dist}/src/App.jsx`, result, function (err) {
                         if (err) throw err;
+                        // Render sample sign-in/sign-out button in App
+                        fs.readFile(`${dist}/src/App.jsx`, function read(err, data) {
+                          var file_content = data.toString();
+                          var str = "\n      <SignInSignOutButton />";
+                          var idx = file_content.indexOf('</div>') + '</div>'.length;
+                          var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                          fs.writeFile(`${dist}/src/App.jsx`, result, function (err) {
+                            if (err) throw err;
+                          });
+                        });
                       }); 
                     });
                   });
@@ -238,8 +249,8 @@ const handleSSO = async (dist:string, config) => {
         fs.readFile(`${dist}/src/Routes.jsx`, function read(err, data) {
           if (err) throw err;
           var file_content = data.toString();
-          var str = "\n      <AuthGuard defaultComponent={Home}>\n        {null}\n      </AuthGuard>";
-          var idx = file_content.indexOf('<Switch>') + '<Switch>'.length;
+          var str = "  <AuthGuard defaultComponent={Home}>\n        {null}\n      </AuthGuard>\n    ";
+          var idx = file_content.indexOf('</Switch>');
           var result = file_content.slice(0, idx) + str + file_content.slice(idx);
           fs.writeFile(`${dist}/src/Routes.jsx`, result, function (err) {
             if (err) throw err;
