@@ -2246,52 +2246,71 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
             case 0:
                 if (!!config.enableSSO) return [3 /*break*/, 1];
                 return [2 /*return*/];
-            case 1: return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/AuthConfig.js'), dist + "/src/components/Auth/AuthConfig.js")];
+            case 1:
+                if (!(config.SSO == 'azure')) return [3 /*break*/, 3];
+                return [4 /*yield*/, handleSSOAzure(dist, config)];
             case 2:
                 _a.sent();
-                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/AuthGuard.jsx'), dist + "/src/components/Auth/AuthGuard.jsx")];
+                return [3 /*break*/, 5];
             case 3:
-                _a.sent();
-                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignInButton.jsx'), dist + "/src/components/Auth/SignInButton.jsx")];
+                if (!(config.SSO == 'cognito')) return [3 /*break*/, 5];
+                return [4 /*yield*/, handleSSOCognito(dist, config)];
             case 4:
                 _a.sent();
+                _a.label = 5;
+            case 5: return [2 /*return*/];
+        }
+    });
+}); };
+var handleSSOAzure = function (dist, config) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/AuthConfig.js'), dist + "/src/components/Auth/AuthConfig.js")];
+            case 1:
+                _a.sent();
+                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/AuthGuard.jsx'), dist + "/src/components/Auth/AuthGuard.jsx")];
+            case 2:
+                _a.sent();
+                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignInButton.jsx'), dist + "/src/components/Auth/SignInButton.jsx")];
+            case 3:
+                _a.sent();
                 return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignOutButton.jsx'), dist + "/src/components/Auth/SignOutButton.jsx")];
-            case 5:
+            case 4:
                 _a.sent();
                 return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/SignInSignOutButton.jsx'), dist + "/src/components/Auth/SignInSignOutButton.jsx")];
-            case 6:
+            case 5:
                 _a.sent();
                 return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/MsGraphApiCall.js'), dist + "/src/components/util/MsGraphApiCall.js")];
-            case 7:
+            case 6:
                 _a.sent();
                 return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Azure/NavigationClient.js'), dist + "/src/components/util/NavigationClient.js")];
-            case 8:
+            case 7:
                 _a.sent();
                 // Create environment variables
                 return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_CLIENT_ID=' + config.SSOClientId)];
-            case 9:
+            case 8:
                 // Create environment variables
                 _a.sent();
                 return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_TENANT_ID=' + config.SSOTenantId)];
-            case 10:
+            case 9:
                 _a.sent();
                 return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_CLOUD_ID=https://login.microsoftonline.com')];
-            case 11:
+            case 10:
                 _a.sent();
                 return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_POST_LOGOUT_REDIRECT_URL=')];
-            case 12:
+            case 11:
                 _a.sent();
                 return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_CLIENT_ID=')];
-            case 13:
+            case 12:
                 _a.sent();
                 return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_TENANT_ID=')];
-            case 14:
+            case 13:
                 _a.sent();
                 return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_CLOUD_ID=https://login.microsoftonline.com')];
-            case 15:
+            case 14:
                 _a.sent();
                 return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_POST_LOGOUT_REDIRECT_URL=')];
-            case 16:
+            case 15:
                 _a.sent();
                 // Add msal packages
                 return [4 /*yield*/, fs.readFile(dist + "/package.json", function read(err, data) {
@@ -2309,7 +2328,7 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                                 throw err;
                         });
                     })];
-            case 17:
+            case 16:
                 // Add msal packages
                 _a.sent();
                 // Imports in App.jsx
@@ -2408,7 +2427,7 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                             });
                         });
                     })];
-            case 18:
+            case 17:
                 // Imports in App.jsx
                 _a.sent();
                 // Imports in index.jsx
@@ -2464,7 +2483,7 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                             });
                         });
                     })];
-            case 19:
+            case 18:
                 // Imports in index.jsx
                 _a.sent();
                 // Imports in Routes.jsx
@@ -2492,11 +2511,213 @@ var handleSSO = function (dist, config) { return __awaiter(void 0, void 0, void 
                             });
                         });
                     })];
-            case 20:
+            case 19:
                 // Imports in Routes.jsx
                 _a.sent();
-                _a.label = 21;
-            case 21: return [2 /*return*/];
+                return [2 /*return*/];
+        }
+    });
+}); };
+var handleSSOCognito = function (dist, config) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Cognito/AuthConfig.js'), dist + "/src/components/Auth/AuthConfig.js")];
+            case 1:
+                _a.sent();
+                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Cognito/PrivateRoute.jsx'), dist + "/src/components/Auth/PrivateRoute.jsx")];
+            case 2:
+                _a.sent();
+                return [4 /*yield*/, fs.copy(path.join(__dirname, '../tamplates/SSO/Cognito/UserContext.js'), dist + "/src/components/Auth/UserContext.js")];
+            case 3:
+                _a.sent();
+                // Create environment variables
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_AWS_PROJECT_REGION=' + config.SSOProjectRegion)];
+            case 4:
+                // Create environment variables
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_COGNITO_IDENTITY_POOL_ID=' + config.SSOCogIDPoolID)];
+            case 5:
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_USER_POOLS_ID=' + config.SSOUserPoolID)];
+            case 6:
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.uat", '\nREACT_APP_SSO_USER_POOLS_WEB_CLIENT_ID=' + config.SSOWebClientID)];
+            case 7:
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_AWS_PROJECT_REGION=')];
+            case 8:
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_COGNITO_IDENTITY_POOL_ID=')];
+            case 9:
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_USER_POOLS_ID=')];
+            case 10:
+                _a.sent();
+                return [4 /*yield*/, fs.appendFile(dist + "/.env.prod", '\nREACT_APP_SSO_USER_POOLS_WEB_CLIENT_ID=')];
+            case 11:
+                _a.sent();
+                // Add packages
+                return [4 /*yield*/, fs.readFile(dist + "/package.json", function read(err, data) {
+                        if (err) {
+                            throw err;
+                        }
+                        var file_content = data.toString();
+                        var str = "\n    \"aws-amplify\": \"^1.1.9\",";
+                        str += "\n    \"prop-types\": \"^15.7.2\",";
+                        var idx = file_content.indexOf('"dependencies": {') + '"dependencies": {'.length;
+                        var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                        fs.writeFile(dist + "/package.json", result, function (err) {
+                            if (err)
+                                throw err;
+                        });
+                    })];
+            case 12:
+                // Add packages
+                _a.sent();
+                // Imports in index.jsx
+                return [4 /*yield*/, fs.readFile(dist + "/src/index.jsx", function read(err, data) {
+                        if (err)
+                            throw err;
+                        var file_content = data.toString();
+                        var str = "import awsConfig from './components/Auth/AuthConfig';\n";
+                        str += "import Amplify from 'aws-amplify';\n";
+                        var result = str + file_content;
+                        fs.writeFile(dist + "/src/index.jsx", result, function (err) {
+                            if (err)
+                                throw err;
+                            // Configure auth with Amplify
+                            fs.readFile(dist + "/src/index.jsx", function read(err, data) {
+                                if (err)
+                                    throw err;
+                                var file_content = data.toString();
+                                var str = "Amplify.configure(awsConfig);\n\n";
+                                var idx = file_content.indexOf('ReactDOM.render');
+                                var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                                fs.writeFile(dist + "/src/index.jsx", result, function (err) {
+                                    if (err)
+                                        throw err;
+                                });
+                            });
+                        });
+                    })];
+            case 13:
+                // Imports in index.jsx
+                _a.sent();
+                // Imports in App.jsx
+                return [4 /*yield*/, fs.readFile(dist + "/src/App.jsx", function read(err, data) {
+                        if (err)
+                            throw err;
+                        var file_content = data.toString();
+                        var str = "";
+                        str += "import { Auth, Hub } from 'aws-amplify';\n";
+                        str += "import UserContext from './components/Auth/UserContext';\n";
+                        var str2 = ", { useState, useEffect }";
+                        var idx = file_content.indexOf('import React') + 'import React'.length;
+                        var result = str + file_content.slice(0, idx) + str2 + file_content.slice(idx);
+                        fs.writeFile(dist + "/src/App.jsx", result, function (err) {
+                            if (err)
+                                throw err;
+                            // Auth logic and effects
+                            fs.readFile(dist + "/src/App.jsx", function read(err, data) {
+                                if (err)
+                                    throw err;
+                                var file_content = data.toString();
+                                var str = "";
+                                str += "\n";
+                                str += "  const [currentUser, setCurrentUser] = useState({});\n";
+                                str += "  const [isLoaded, setIsLoaded] = useState(false);\n\n";
+                                str += "  const updateCurrentUser = async (newUser) => {\n";
+                                str += "    if (newUser) {\n";
+                                str += "      await setCurrentUser(newUser);\n";
+                                str += "      return;\n";
+                                str += "    }\n";
+                                str += "    try {\n";
+                                str += "      const user = await Auth.currentAuthenticatedUser();\n";
+                                str += "      await setCurrentUser(user);\n";
+                                str += "      await setIsLoaded(true);\n";
+                                str += "    } catch (err) {\n";
+                                str += "      await setCurrentUser(null);\n";
+                                str += "      await setIsLoaded(true);\n";
+                                str += "    }\n";
+                                str += "  };\n\n";
+                                str += "  const onHubAuth = (data) => {\n";
+                                str += "    const { payload } = data;\n";
+                                str += "    if (payload.event !== 'signIn') {\n";
+                                str += "      updateCurrentUser();\n";
+                                str += "    }\n";
+                                str += "  };\n\n";
+                                str += "  useEffect(() => {\n";
+                                str += "    updateCurrentUser();\n";
+                                str += "    Hub.listen('auth', onHubAuth);\n";
+                                str += "  }, []);\n";
+                                var idx = file_content.indexOf('function App() {') + 'function App() {'.length;
+                                var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                                fs.writeFile(dist + "/src/App.jsx", result, function (err) {
+                                    if (err)
+                                        throw err;
+                                    //Render context in app
+                                    fs.readFile(dist + "/src/App.jsx", function read(err, data) {
+                                        if (err)
+                                            throw err;
+                                        var file_content = data.toString();
+                                        var str = "";
+                                        str += "<UserContext.Provider";
+                                        str += "\n      value={{";
+                                        str += "\n        user: currentUser,";
+                                        str += "\n        updateCurrentUser,";
+                                        str += "\n        isLoaded,";
+                                        str += "\n      }}";
+                                        str += "\n    >";
+                                        str += "\n      <div className=\"\">";
+                                        str += "\n        <Router>";
+                                        str += "\n          <Routes />";
+                                        str += "\n        </Router>";
+                                        str += "\n      </div>";
+                                        str += "\n    </UserContext.Provider>";
+                                        var idx = file_content.indexOf('<div');
+                                        var idx2 = file_content.indexOf('</div>') + '</div>'.length;
+                                        var result = file_content.slice(0, idx) + str + file_content.slice(idx2);
+                                        fs.writeFile(dist + "/src/App.jsx", result, function (err) {
+                                            if (err)
+                                                throw err;
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    })];
+            case 14:
+                // Imports in App.jsx
+                _a.sent();
+                // Imports in Routes.jsx
+                return [4 /*yield*/, fs.readFile(dist + "/src/Routes.jsx", function read(err, data) {
+                        if (err)
+                            throw err;
+                        var file_content = data.toString();
+                        var str = "import PrivateRoute from './components/Auth/PrivateRoute';\n";
+                        var result = str + file_content;
+                        fs.writeFile(dist + "/src/Routes.jsx", result, function (err) {
+                            if (err)
+                                throw err;
+                            // Put a sample PrivateRoute into Switch
+                            fs.readFile(dist + "/src/Routes.jsx", function read(err, data) {
+                                if (err)
+                                    throw err;
+                                var file_content = data.toString();
+                                var str = "  <PrivateRoute exact path=\"/auth\" component={Home} redirectPath=\"/\" />\n    ";
+                                var idx = file_content.indexOf('</Switch>');
+                                var result = file_content.slice(0, idx) + str + file_content.slice(idx);
+                                fs.writeFile(dist + "/src/Routes.jsx", result, function (err) {
+                                    if (err)
+                                        throw err;
+                                });
+                            });
+                        });
+                    })];
+            case 15:
+                // Imports in Routes.jsx
+                _a.sent();
+                return [2 /*return*/];
         }
     });
 }); };
@@ -2775,11 +2996,20 @@ function initTemplate() {
                             message: 'Enable Single Sign On?',
                         },
                         {
+                            type: 'rawlist',
+                            name: 'SSO',
+                            message: 'Select an option for Single Sign On: ',
+                            choices: [{ name: 'Azure', value: 'azure' }, { name: 'Cognito', value: 'cognito' }],
+                            when: function (answers) {
+                                return answers.enableSSO;
+                            },
+                        },
+                        {
                             type: 'input',
                             name: 'SSOClientId',
                             message: 'What is your Client ID?',
                             when: function (answers) {
-                                return answers.enableSSO;
+                                return answers.enableSSO && answers.SSO == 'azure';
                             },
                         },
                         {
@@ -2787,13 +3017,45 @@ function initTemplate() {
                             name: 'SSOTenantId',
                             message: 'What is your Tenant ID?',
                             when: function (answers) {
-                                return answers.enableSSO;
+                                return answers.enableSSO && answers.SSO == 'azure';
+                            },
+                        },
+                        {
+                            type: 'input',
+                            name: 'SSOProjectRegion',
+                            message: 'What is your AWS project region?',
+                            when: function (answers) {
+                                return answers.enableSSO && answers.SSO == 'cognito';
+                            },
+                        },
+                        {
+                            type: 'input',
+                            name: 'SSOCogIDPoolID',
+                            message: 'What is your AWS Cognito Identity Pool ID?',
+                            when: function (answers) {
+                                return answers.enableSSO && answers.SSO == 'cognito';
+                            },
+                        },
+                        {
+                            type: 'input',
+                            name: 'SSOUserPoolID',
+                            message: 'What is your AWS User Pools ID?',
+                            when: function (answers) {
+                                return answers.enableSSO && answers.SSO == 'cognito';
+                            },
+                        },
+                        {
+                            type: 'input',
+                            name: 'SSOWebClientID',
+                            message: 'What is your AWS User Pools web client ID?',
+                            when: function (answers) {
+                                return answers.enableSSO && answers.SSO == 'cognito';
                             },
                         },
                     ];
                     inquirer.prompt(questions)
                         .then(function (_a) {
-                        var tplName = _a.tplName, project = _a.project, enableMixpanel = _a.enableMixpanel, mixPanelId = _a.mixPanelId, enableSSO = _a.enableSSO, enableGA = _a.enableGA, GAId = _a.GAId, SSOClientId = _a.SSOClientId, SSOTenantId = _a.SSOTenantId;
+                        var tplName = _a.tplName, project = _a.project, enableMixpanel = _a.enableMixpanel, mixPanelId = _a.mixPanelId, enableSSO = _a.enableSSO, enableGA = _a.enableGA, GAId = _a.GAId, SSO = _a.SSO, SSOClientId = _a.SSOClientId, SSOTenantId = _a.SSOTenantId, SSOProjectRegion = _a.SSOProjectRegion, SSOCogIDPoolID = _a.SSOCogIDPoolID, SSOUserPoolID = _a.SSOUserPoolID, SSOWebClientID = _a.SSOWebClientID;
                         return __awaiter(_this, void 0, void 0, function () {
                             var tpl, path, branch, from, pwd, config;
                             return __generator(this, function (_b) {
@@ -2810,8 +3072,13 @@ function initTemplate() {
                                     'enableSSO': enableSSO,
                                     'enableGA': enableGA,
                                     'GAId': GAId,
+                                    'SSO': SSO,
                                     'SSOClientId': SSOClientId,
-                                    'SSOTenantId': SSOTenantId
+                                    'SSOTenantId': SSOTenantId,
+                                    'SSOProjectRegion': SSOProjectRegion,
+                                    'SSOCogIDPoolID': SSOCogIDPoolID,
+                                    'SSOUserPoolID': SSOUserPoolID,
+                                    'SSOWebClientID': SSOWebClientID
                                 };
                                 initiator({ path: path, branch: branch, from: from, dist: pwd + "/" + project }, config);
                                 return [2 /*return*/];
