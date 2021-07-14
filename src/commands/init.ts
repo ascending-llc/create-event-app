@@ -59,11 +59,20 @@ async function initTemplate () {
       message: 'Enable Single Sign On?',
     },
     {
+      type: 'rawlist',
+      name: 'SSO',
+      message: 'Select an option for Single Sign On: ',
+      choices: [{name: 'Azure', value: 'azure'}, {name: 'Cognito', value: 'cognito'}],
+      when: function (answers) {
+        return answers.enableSSO;
+      },
+    },
+    {
       type: 'input',
       name: 'SSOClientId',
       message: 'What is your Client ID?',
       when: function (answers) {
-        return answers.enableSSO;
+        return answers.enableSSO && answers.SSO == 'azure';
       },
     },
     {
@@ -71,13 +80,46 @@ async function initTemplate () {
       name: 'SSOTenantId',
       message: 'What is your Tenant ID?',
       when: function (answers) {
-        return answers.enableSSO;
+        return answers.enableSSO && answers.SSO == 'azure';
+      },
+    },
+    {
+      type: 'input',
+      name: 'SSOProjectRegion',
+      message: 'What is your AWS project region?',
+      when: function (answers) {
+        return answers.enableSSO && answers.SSO == 'cognito';
+      },
+    },
+    {
+      type: 'input',
+      name: 'SSOCogIDPoolID',
+      message: 'What is your AWS Cognito Identity Pool ID?',
+      when: function (answers) {
+        return answers.enableSSO && answers.SSO == 'cognito';
+      },
+    },
+    {
+      type: 'input',
+      name: 'SSOUserPoolID',
+      message: 'What is your AWS User Pools ID?',
+      when: function (answers) {
+        return answers.enableSSO && answers.SSO == 'cognito';
+      },
+    },
+    {
+      type: 'input',
+      name: 'SSOWebClientID',
+      message: 'What is your AWS User Pools web client ID?',
+      when: function (answers) {
+        return answers.enableSSO && answers.SSO == 'cognito';
       },
     },
   ]
 
   prompt(questions)
-    .then(async ({ tplName, project, enableMixpanel, mixPanelId, enableSSO, enableGA, GAId, SSOClientId, SSOTenantId }) => {
+    .then(async ({ tplName, project, enableMixpanel, mixPanelId, enableSSO, enableGA, GAId, 
+      SSO, SSOClientId, SSOTenantId, SSOProjectRegion, SSOCogIDPoolID, SSOUserPoolID, SSOWebClientID }) => {
     // console.log(`${tplName}, ${project}, ${enableMixpanel}, ${mixPanelId} `)
     const tpl = tplList.filter(({ name }) => name === tplName)[0]
     const { path, branch, from }:any = tpl
@@ -89,8 +131,13 @@ async function initTemplate () {
       'enableSSO': enableSSO,
       'enableGA': enableGA,
       'GAId': GAId,
+      'SSO': SSO,
       'SSOClientId': SSOClientId,
-      'SSOTenantId': SSOTenantId
+      'SSOTenantId': SSOTenantId,
+      'SSOProjectRegion': SSOProjectRegion,
+      'SSOCogIDPoolID': SSOCogIDPoolID,
+      'SSOUserPoolID': SSOUserPoolID,
+      'SSOWebClientID': SSOWebClientID
     }
     initiator({ path, branch, from, dist: `${pwd}/${project}` }, config)
   })
